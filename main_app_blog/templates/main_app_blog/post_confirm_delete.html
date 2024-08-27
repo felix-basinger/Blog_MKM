@@ -1,0 +1,16 @@
+{% extends "base_without.html" %}
+{% block content %}
+    <div class="content-section">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Видалення запису</legend>
+                <h2>Ви впевнені, що хочете видалити цей запис?<br><b>"{{ object.title }}"</b></h2>
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-danger" type="submit">Так, хочу видалити</button>
+                <a class="btn btn-outline-secondary" href="{% url 'post-detail' object.id %}">Скасування</a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

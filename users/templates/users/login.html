@@ -1,0 +1,26 @@
+{% extends "base_without.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center">
+    <div class="col-md-6">
+        <div class="p-4 bg-white shadow rounded" style="border: 0.1px solid #dddddd;">
+            <h2 class="mb-4 text-center">Вхід</h2>
+            <form method="POST">
+                {% csrf_token %}
+                <fieldset class="form-group">
+                    <legend class="border-bottom mb-4"></legend>
+                    {{ form|crispy }}
+                </fieldset>
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-outline-info btn-block log" style="max-width: 150px; width: 100%; margin: 0 auto;">Увійти</button>
+                </div>
+            </form>
+            <div class="border-top pt-3 mt-3">
+                <small class="text-muted d-block text-center">
+                    Немає облікового запису? <a href="{% url 'register' %}">Зареєструватись</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

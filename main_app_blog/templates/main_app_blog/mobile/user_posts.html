@@ -1,0 +1,89 @@
+{% extends "base_mobile.html" %}
+{% load static %}
+{% block content %}
+<div class="mb-4">
+    <button class="btn btn-outline-secondary log" onclick="window.history.back();">&larr; Назад</button>
+</div>
+<!--<h1 class="mb-3">Записи пользователя {{ view.kwargs.username }}</h1>-->
+{% for post in posts %}
+<article class="media content-section mb-5 p-3 bg-white shadow-lg rounded-lg position-relative"
+         style="border: 0.1px solid #dddddd; border-radius: 15px;  overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+    <!-- Иконка пользователя -->
+    <div class="d-flex align-items-start">
+
+        <!-- Основной контент -->
+        <div class="media-body">
+            <!-- Заголовок и дата -->
+            <div class="d-flex  align-items-center mb-2">
+                <div class="mr-2">
+                        <a class="font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}"
+                           style="font-size: 1.25rem;">
+                            {% if post.author.profile.image %}
+                            <img class="rounded-circle border border-primary shadow-sm"
+                                 src="{{ post.author.profile.image.url }}"
+                                 alt="{{ post.author }}" width="60" height="60">
+                            {% else %}
+                            <img class="rounded-circle border border-primary shadow-sm"
+                                 src="{% static 'images/Flag_of_Ukraine.png' %}"
+                                 alt="{{ post.author }}" width="60" height="60">
+                            {% endif %}
+                        </a>
+                    </div>
+                <div>
+
+                    <a class="font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}"
+                       style="font-size: 1.25rem;">{{ post.author }}</a>
+                    <small class="text-muted d-block">{{ post.date_posted|date:"d M Y, H:i" }}</small>
+                </div>
+                <!--                <div class="badge badge-pill badge-primary" style="font-size: 0.9rem;">-->
+                <!--                    {{ post.author.profile.get_user_role_display }}-->
+                <!--                </div>-->
+            </div>
+            <div class="border-top mt-3 mb-3" style="border-top: 2px dashed #1437AD;"></div>
+            <!-- Заголовок поста -->
+            <h3 class="mt-1 mb-2"><a class="article-title text-dark font-weight-bold text-decoration-none"
+                                     href="{% url 'post-detail' post.pk %}">{{ post.title }}</a></h3>
+            <!-- Текст поста -->
+            <p class="article-content text-muted">{{ post.preview }}</p>
+            <div class="d-flex justify-content-end align-items-center mt-3"
+                 style="font-size: 0.85rem; color: #666; gap: 10px;">
+                <div class="d-flex align-items-center ml-3">
+                    <i class="bx bx-like"></i> <span class="ml-1">{{ post.total_likes }}</span>
+                </div>
+                <div class="d-flex align-items-center  ">
+                    <i class="bx bx-dislike"></i> <span class="ml-1">{{ post.total_dislikes }}</span>
+                </div>
+                <!-- Количество просмотров -->
+                <div class="d-flex align-items-center">
+                    <i class="bx bx-show"></i> <span class="ml-1">{{ post.views }}</span>
+                </div>
+            </div>
+            <!-- Разделительная линия -->
+
+        </div>
+    </div>
+</article>
+{% endfor %}
+<div class="pagination justify-content-center mt-5 flex-wrap text-center">
+    {% if is_paginated %}
+    {% if page_obj.has_previous %}
+    <a class="btn custom-pagination-btn mb-4 mr-1 shadow-sm" href="?page=1" style="font-size: 20px;">&laquo;</a>
+    <a class="btn custom-pagination-btn mb-4 mr-1 shadow-sm" href="?page={{ page_obj.previous_page_number }}" style="font-size: 20px;">&lsaquo;</a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+    {% if page_obj.number == num %}
+    <span class="btn active-page-btn mb-4 mr-1 shadow custom-pagination-btn" style="font-size: 20px;">{{ num }}</span>
+    {% elif num > page_obj.number|add:'-2' and num < page_obj.number|add:'2' %}
+    <a class="btn custom-pagination-btn mb-4 mr-1 shadow-sm" href="?page={{ num }}" style="font-size: 20px;">{{ num }}</a>
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a class="btn custom-pagination-btn mb-4 mr-1 shadow-sm" href="?page={{ page_obj.next_page_number }}" style="font-size: 20px;">&rsaquo;</a>
+    <a class="btn custom-pagination-btn mb-4 mr-1 shadow-sm" href="?page={{ page_obj.paginator.num_pages }}" style="font-size: 20px;">&raquo;</a>
+    {% endif %}
+    {% endif %}
+
+</div>
+{% endblock content %}

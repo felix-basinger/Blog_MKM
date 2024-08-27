@@ -1,0 +1,142 @@
+{% extends "base_without.html" %}
+{% load crispy_forms_tags %}
+{% block content %}
+<style>
+    img {
+    max-width: 100%;
+    height: auto;
+    object-fit: cover;
+}
+</style>
+<div class="mb-4">
+    <button class="btn btn-outline-secondary log" onclick="window.history.back();">&larr; Назад</button>
+</div>
+<div class="content-section">
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4" style="text-align: center; font-size: 30px; font-weight: 600;">Новий запис</legend>
+            {{ form.media }}  <!-- Подключение медиафайлов для Summernote -->
+            {{ form|crispy }}
+        </fieldset>
+
+
+        <div id="all-tags-container ">
+            <label>Усі розділи:</label>
+            {% for tag in form.fields.tags.queryset %}
+            <div id="tag-{{ tag.id }}" class="all-tag">
+                <span>{{ tag.name }}</span>
+                <button type="button" class="btn btn-danger btn-sm"
+                        onclick='removeTag("{{ tag.id }}", "{{ tag.name }}")'>Видалити
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="form-group text-center mt-4">
+            <button class="btn btn-outline-info log" type="submit">Зберегти</button>
+        </div>
+    </form>
+</div>
+<script>
+    // Инициализация Summernote с автоматическим применением стилей к изображениям
+    $(document).ready(function() {
+        $('textarea.summernote').summernote({
+            callbacks: {
+                onImageUpload: function(files) {
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        var reader = new FileReader();
+                        reader.onloadend = function() {
+                            $('textarea.summernote').summernote('insertImage', reader.result, function($image) {
+                                $image.css('width', '100%');
+                                $image.css('height', 'auto');
+                                $image.css('object-fit', 'cover');
+                            });
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                },
+                onMediaDelete: function(target) {
+                    // Логика удаления изображения с сервера, если нужно
+                }
+            }
+        });
+
+        // Применение стилей ко всем существующим изображениям при загрузке редактора
+        $('textarea.summernote').on('summernote.image.upload', function(customEvent, files) {
+            var $images = $(this).find('img');
+            $images.each(function() {
+                $(this).css('width', '100%');
+                $(this).css('height', 'auto');
+                $(this).css('object-fit', 'cover');
+            });
+        });
+    });
+</script>
+<script>
+    let imageCounter = 0;
+    function addCaptionField() {
+        imageCounter++;
+        const container = document.getElementById('captions-container');
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.name = 'captions';
+        input.placeholder = 'Подпись к изображению ' + imageCounter;
+        input.className = 'form-control';
+        container.appendChild(input);
+    }
+
+    document.getElementById('id_images').addEventListener('change', function(event) {
+        const files = event.target.files;
+        document.getElementById('captions-container').innerHTML = '';
+        for (let i = 0; i < files.length; i++) {
+            addCaptionField();
+        }
+    });
+</script>
+<script>
+    function removeTag(tagId, tagName) {
+    var tagItem = document.getElementById('tag-' + tagId);
+    if (tagItem) {
+        tagItem.style.display = 'none';
+
+        // Отправляем AJAX-запрос для удаления тега из базы данных
+        fetch(`/delete_tag/${tagId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+        }).then(response => {
+            if (response.ok) {
+                console.log(`Tag ${tagName} deleted successfully.`);
+            } else {
+                console.error(`Failed to delete tag ${tagName}.`);
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    }
+}
+
+// Функция для получения CSRF токена
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+
+{% endblock content %}
+

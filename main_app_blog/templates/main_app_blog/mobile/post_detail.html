@@ -1,0 +1,215 @@
+{% extends "base_without.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+<div class="mb-4">
+    <button class="btn btn-outline-secondary log" onclick="window.history.back();">&larr; Назад</button>
+</div>
+
+{% if object.author == user %}
+<div>
+    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post-update' object.id %}">Редактировать</a>
+    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Удалить</a>
+</div>
+{% endif %}
+
+<article class="media content-section mb-5 p-3 bg-white shadow-lg rounded-lg position-relative"
+         style="border: 0.1px solid #dddddd; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+    <div class="d-flex align-items-start">
+
+        <div class="media-body">
+            <div class="d-flex align-items-center mb-2">
+                <div class="mr-2">
+                    <a class="font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}"
+                       style="font-size: 1.25rem;">
+                        {% if post.author.profile.image %}
+                        <img class="rounded-circle border border-primary shadow-sm"
+                             src="{{ post.author.profile.image.url }}"
+                             alt="{{ post.author }}" width="60" height="60">
+                        {% else %}
+                        <img class="rounded-circle border border-primary shadow-sm"
+                             src="{% static 'images/Flag_of_Ukraine.png' %}"
+                             alt="{{ post.author }}" width="60" height="60">
+                        {% endif %}
+                    </a>
+                </div>
+                <div>
+                    <a class="font-weight-bold text-dark" href="{% url 'user-posts' post.author.username %}"
+                       style="font-size: 1.25rem;">{{ post.author }}</a>
+                    <small class="text-muted d-block">{{ post.date_posted|date:"d M Y, H:i" }}</small>
+
+                </div>
+
+            </div>
+            <div class="border-top mt-3 mb-3" style="border-top: 2px dashed #1437AD;"></div>
+            <h3 class="mt-1 mb-2 " style="max-width: 100%; height: auto; object-fit: cover; font-weight: 700; color: black;">{{ post.title }}</h3>
+            <p class="article-content text-dark post-content" style="font-size: 18px;">{{ post.content|safe }}</p>
+            <div class="text-right">
+                {% if user.is_authenticated %}
+                <form id="like-form" action="{% url 'like-post' object.pk %}" method="POST" class="d-inline-block">
+                    {% csrf_token %}
+                    Оценить |
+                    <button type="button" class="btn btn-link p-0" id="like-button" style="text-decoration: none;">
+                        <i id="like-icon"
+                           class="bx {% if user in object.likes.all %}bxs-like text-dark{% else %}bx-like text-dark{% endif %}"
+                           style="font-size: 24px;"></i>
+                        <span id="like-count" style="color: black;">{{ object.total_likes }}</span>
+                    </button>
+                </form>
+                <form id="dislike-form" action="{% url 'dislike-post' object.pk %}" method="POST"
+                      class="d-inline-block">
+                    {% csrf_token %}
+                    <button type="button" class="btn btn-link p-0" id="dislike-button" style="text-decoration: none;">
+                        <i id="dislike-icon"
+                           class="bx {% if user in object.dislikes.all %}bxs-dislike text-dark{% else %}bx-dislike text-dark{% endif %}"
+                           style="font-size: 24px;"></i>
+                        <span id="dislike-count" style="color: black;">{{ object.total_dislikes }}</span>
+                    </button>
+                </form>
+                {% endif %}
+            </div>
+
+        </div>
+
+    </div>
+
+</article>
+
+<!-- Форма для добавления нового комментария -->
+<!--<section id="add-comment" class="mt-5">-->
+
+<!--    <div class="card p-4 shadow-sm" style="border-radius: 15px;">-->
+<!--        <h4 class="">Оставить комментарий</h4>-->
+<!--        <div class="border-top mt-3 mb-3" style="border-top: 2px dashed #1437AD;"></div>-->
+<!--        <form method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            <div class="form-group">-->
+<!--                <label for="id_content" class="font-weight-bold">Ваш комментарий</label>-->
+<!--                <textarea id="id_content" name="content" class="form-control" style="border-radius: 15px;" rows="4"-->
+<!--                          placeholder="Напишите ваш комментарий здесь..."></textarea>-->
+<!--            </div>-->
+<!--            <div class="form-group text-center">-->
+<!--                <button class="btn btn-primary log w-100" type="submit" style="max-width: 200px;">Отправить</button>-->
+<!--            </div>-->
+<!--        </form>-->
+<!--    </div>-->
+<!--</section>-->
+
+<!-- Секция для комментариев -->
+<!--<section id="comments" class="mt-5">-->
+<!--    <h4 class="mb-4">Комментарии</h4>-->
+<!--    {% for comment in comments %}-->
+<!--    <div class="media p-4 rounded mb-4 position-relative"-->
+<!--         style="background-color: #f8f9fa; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">-->
+<!--        &lt;!&ndash; Кнопка удаления в правом верхнем углу &ndash;&gt;-->
+<!--        {% if request.user == comment.author %}-->
+<!--        <form action="{% url 'comment-delete' comment.pk %}" method="post" class="position-absolute"-->
+<!--              style="bottom: 10px; right: 10px;">-->
+<!--            {% csrf_token %}-->
+<!--            <button style="border-radius: 15px;" type="submit" class="btn btn-danger btn-sm">Удалить</button>-->
+<!--        </form>-->
+<!--        {% endif %}-->
+
+<!--        <div class="d-flex align-items-start">-->
+<!--            &lt;!&ndash; Аватар автора комментария &ndash;&gt;-->
+<!--            <div class="mr-3">-->
+<!--                {% if comment.author.profile.image %}-->
+<!--                <img class="rounded-circle border border-secondary" src="{{ comment.author.profile.image.url }}"-->
+<!--                     alt="{{ comment.author }}" width="50" height="50">-->
+<!--                {% else %}-->
+<!--                <img class="rounded-circle border border-secondary" src="{% static 'images/default.jpg' %}"-->
+<!--                     alt="{{ comment.author }}" width="50" height="50">-->
+<!--                {% endif %}-->
+<!--            </div>-->
+<!--            &lt;!&ndash; Основное содержание комментария &ndash;&gt;-->
+<!--            <div class="media-body">-->
+<!--                &lt;!&ndash; Имя автора и дата комментария &ndash;&gt;-->
+<!--                <h6 class="font-weight-bold mb-0">-->
+<!--                    {{ comment.author.username }}-->
+<!--                    {% if comment.author == post.author %}-->
+<!--                    <span class="badge badge-info ml-2" style="font-size: 0.9rem;">Автор</span>-->
+<!--                    {% endif %}-->
+<!--                </h6>-->
+<!--                <small class="text-muted">{{ comment.date_posted|date:"d M Y, H:i" }}</small>-->
+<!--                &lt;!&ndash; Содержание комментария &ndash;&gt;-->
+<!--                <p class="mb-0 mt-2" style="line-height: 1.5;">{{ comment.content }}</p>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    {% empty %}-->
+<!--    <p class="text-muted">Комментариев пока нет.</p>-->
+<!--    {% endfor %}-->
+<!--</section>-->
+
+
+<script>
+    document.getElementById('like-button').addEventListener('click', function() {
+        const url = document.getElementById('like-form').action;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateButtons(data);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    document.getElementById('dislike-button').addEventListener('click', function() {
+        const url = document.getElementById('dislike-form').action;
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrftoken,
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateButtons(data);
+        })
+        .catch(error => console.error('Error:', error));
+    });
+
+    function updateButtons(data) {
+        const likeIcon = document.getElementById('like-icon');
+        const likeCount = document.getElementById('like-count');
+        const dislikeIcon = document.getElementById('dislike-icon');
+        const dislikeCount = document.getElementById('dislike-count');
+
+        if (data.liked) {
+            likeIcon.classList.remove('bx-like', 'text-muted');
+            likeIcon.classList.add('bxs-like', 'text-primary');
+            dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
+            dislikeIcon.classList.add('bx-dislike', 'text-muted');
+        } else {
+            likeIcon.classList.remove('bxs-like', 'text-primary');
+            likeIcon.classList.add('bx-like', 'text-muted');
+        }
+
+        if (data.disliked) {
+            dislikeIcon.classList.remove('bx-dislike', 'text-muted');
+            dislikeIcon.classList.add('bxs-dislike', 'text-primary');
+            likeIcon.classList.remove('bxs-like', 'text-primary');
+            likeIcon.classList.add('bx-like', 'text-muted');
+        } else {
+            dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
+            dislikeIcon.classList.add('bx-dislike', 'text-muted');
+        }
+
+        likeCount.textContent = data.total_likes;
+        dislikeCount.textContent = data.total_dislikes;
+    }
+</script>
+
+
+{% endblock content %}

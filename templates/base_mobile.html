@@ -1,0 +1,388 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+    <!-- Обязательные мета-теги -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap, иконки и шрифт -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+          rel="stylesheet">
+
+    {% if title %}
+    <title>Блог клуба {{ title }}</title>
+    {% else %}
+    <title>Блог клуба Python Bytes</title>
+    {% endif %}
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: url("{% static 'images/blokit.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+        }
+
+
+
+        .navbar {
+            background: linear-gradient(to right, #0056fb, #fed700); /* Градиент синий-желтый */
+            margin-bottom: 40px;
+            padding: 15px 0;
+            border-bottom: 2px solid #ffc107;
+        }
+
+        .navbar-brand {
+            font-weight: 600;
+            color: #ffffff;
+            font-size: 24px;
+        }
+
+        .navbar-brand i {
+            font-size: 1.8rem;
+            color: #ffea01; /* Желтая иконка */
+        }
+
+        .navbar-brand:hover {
+            color: #ffca2c;
+        }
+
+        .nav-link {
+            color: #ffffff !important;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+            padding: 10px 15px;
+        }
+
+        .nav-link:hover {
+            color: #ffea01 !important;
+            background-color: rgba(255, 255, 255, 0.1); /* Легкий белый фон при наведении */
+            border-radius: 5px;
+        }
+
+         .nav-link:hover, .nav-item.active .nav-link {
+            color: #ffea01 !important;
+            background-color: rgba(255, 255, 255, 0.1) !important; /* Легкий белый фон как при наведении */
+            border-radius: 5px;
+        }
+        .right-link {
+            color: #ffffff !important;
+            transition: color 0.3s ease;
+            font-size: 1.1rem;
+            padding: 10px 15px;
+        }
+
+        .right-link:hover {
+            color: #0056fb !important;
+            background-color: rgba(255, 255, 255, 0.1); /* Легкий белый фон при наведении */
+            border-radius: 5px;
+        }
+
+        .nav-item.active .nav-link {
+            font-weight: 500;
+            color: #ffea01 !important;
+        }
+
+        .content-section {
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            position: -webkit-sticky; /* Для поддержки в Safari */
+            position: sticky;
+            top: 0px; /* Отступ сверху */
+        }
+
+
+        footer {
+            background: linear-gradient(to right, #0056fb, #fed700); /* Градиент синий-желтый */
+            color: #ffffff;
+            padding: 20px 0;
+            margin-top: 40px;
+            border-top: 2px solid #ffc107;
+        }
+
+        footer a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ffca2c;
+        }
+
+        .social-icons a {
+            font-size: 1.2rem;
+            margin: 0 7px;
+        }
+
+        .social-icons a:hover {
+            color: #ffea01;
+        }
+
+        .list-group-item {
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #fed700; /* Цвет фона при наведении */
+        color: #ffffff !important;  /* Цвет текста при наведении */
+    }
+
+    .list-group-item:hover a{
+        text-decoration: none;
+        color: #000000 !important;  /* Цвет текста при наведении */
+    }
+
+    /* Подсветка активного раздела */
+    .list-group-item.active {
+        background-color: #fed700; /* Цвет фона для активного раздела */
+        color: #000000 !important;  /* Цвет текста для активного раздела */
+    }
+
+        .active-tag {
+    background-color: #fed700; /* Цвет фона для активного раздела */
+        color: #000000 !important;  /* Цвет текста для активного раздела */
+}
+
+          .back-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: #0056fb;
+    color: #ffffff;
+    text-align: center;
+    line-height: 50px;
+    font-size: 24px;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1000;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+        .rotate-icon {
+        position: absolute;
+    transition: transform 0.3s ease;
+}
+
+.rotate-icon.rotate {
+    transform: rotate(180deg);
+}
+    </style>
+</head>
+<body>
+<header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark ">
+        <div class="container">
+            <a class="navbar-brand mr-4 d-flex align-items-center" href="{% url 'index' %}"
+               style="font-size: 20px; font-weight: 500;">
+                <i class=''>
+                    <img src="{% static 'images/logo_site.png' %}" alt="Logo"
+                         style="width: 50px; height: auto; margin-right: 10px;">
+                </i>
+                <span style="line-height: 1.0; font-family: 'Arsenal SC', sans-serif;">
+        Культурна<br>Спадщина<br>Маріуполя
+    </span>
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+                    aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation"
+                    style="background-color: rgba(0, 0, 0, 0.3);">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarToggle">
+                <div class="navbar-nav mr-auto">
+                    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}"
+                       href="{% url 'index' %}">Головна</a>
+                    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}"
+                       href="{% url 'about' %}">Про нас</a>
+                    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'popular-posts' %}active{% endif %}"
+                       href="{% url 'popular-posts' %}">Популярні</a>
+                    {% if not user.is_staff %}
+                    <a class="nav-item nav-link {% if request.resolver_match.url_name == 'liked-posts' %}active{% endif %}"
+                       href="{% url 'liked-posts' %}">Улюбленi</a>
+                    {% endif %}
+                </div>
+                <!-- Правая часть навигационной панели -->
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    {% if user.is_superuser %}
+                    <a class="nav-item nav-link right-link {% if request.resolver_match.url_name == 'post-create' %}active{% endif %}"
+                       href="{% url 'post-create' %}">Новий запис</a>
+                    {% endif %}
+                    <a class="nav-item nav-link right-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
+                       href="{% url 'profile' %}">Профіль</a>
+                    <!-- Форма для выхода из системы через POST -->
+                    <form id="logout-form" action="{% url 'logout' %}" method="post" style="display: none;">
+                        {% csrf_token %}
+                    </form>
+                    <a class="nav-item nav-link right-link"
+                       href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        Вихід
+                    </a>
+                    {% else %}
+                    <a class="nav-item nav-link right-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}"
+                       href="{% url 'login' %}">Вхід</a>
+                    <a class="nav-item nav-link right-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}"
+                       href="{% url 'register' %}">Реєстрація</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main role="main" class="container">
+    <div class="row">
+        <div class="col-md-4"  >
+            <a data-toggle="collapse" href="#sectionsCollapse" role="button" aria-expanded="false"
+               aria-controls="sectionsCollapse" class="text-dark" style="text-decoration: none;">
+                <div class="content-section bg-white" style="text-decoration: none; background: linear-gradient(to bottom, #0056fb 50%, #ffea01 50%) top/100% 10px no-repeat;">
+                    <h2 style="color: black; text-align: center; margin-top: 5px;">
+                        Розділи
+                        <span><i class="bx bx-chevron-down rotate-icon" style="  top: 30px;"></i></span>
+                    </h2>
+            </a>
+            <div class="collapse" id="sectionsCollapse">
+                <ul class="list-group">
+                    {% for tag in tags %}
+                    <li class="list-group-item list-group-item-light" data-tag-name="{{ tag.name }}">
+                        <a href="{% url 'tag-posts' tag.name %}" class="text-dark">{{ tag.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+
+    </div>
+</main>
+<span id="back-to-top" class="back-to-top">
+    <i class="bi bi-shift-fill"></i>
+</span>
+<footer class="text-center">
+    <div class="container">
+        <p style="font-size: 16px;">© Культурна cпадщина Маріуполя <span id="currentYear"></span></p>
+        <div class="social-icons mt-2">
+            <a href="https://www.facebook.com/people/КУ-Маріупольський-краєзнавчий-музей/100093184796939/"><i
+                    class="bi bi-facebook"></i></a>
+            <a href="https://t.me/muzey_mariupol"><i class="bi bi-telegram"></i></a>
+            <a href="https://www.instagram.com/mkm.mariupol/"><i class="bi bi-instagram"></i></a>
+        </div>
+        <a href="https://mariupol-museum.org.ua/">
+            <img src="{% static 'images/footer-logo.png' %}" alt="Logo"
+             style="width: auto; height: 90px; padding-top: 10px;">
+        </a>
+    </div>
+</footer>
+
+<!-- Дополнительные скрипты JavaScript -->
+<!-- Сначала jQuery, затем Popper.js, последним Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Получаем текущий путь URL
+        var currentPath = window.location.pathname;
+
+        // Проходим по каждому элементу списка и проверяем, совпадает ли его href с текущим путем
+        $('.list-group-item a').each(function() {
+            var link = $(this).attr('href');
+            if (currentPath.includes(link)) {
+                $(this).closest('.list-group-item').addClass('active-tag');
+            }
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+        var backToTop = $('#back-to-top');
+
+        $(window).scroll(function() {
+            if ($(window).scrollTop() > 300) {
+                backToTop.addClass('show');
+            } else {
+                backToTop.removeClass('show');
+            }
+        });
+
+        backToTop.on('click', function(e) {
+            e.preventDefault();
+            $('html, body').animate({scrollTop: 0}, '300');
+        });
+    });
+</script>
+<script>
+    $(document).ready(function() {
+    var toggleIcon = $('.rotate-icon');
+    var collapseElement = $('#sectionsCollapse');
+
+    // Проверяем начальное состояние
+    if (collapseElement.hasClass('show')) {
+        toggleIcon.addClass('rotate');
+    }
+
+    // Меняем состояние стрелки при открытии и закрытии
+    collapseElement.on('show.bs.collapse', function () {
+        toggleIcon.addClass('rotate');
+    });
+
+    collapseElement.on('hide.bs.collapse', function () {
+        toggleIcon.removeClass('rotate');
+    });
+
+    // Проверяем значение aria-expanded для управления поворотом стрелки
+    $('a[data-toggle="collapse"]').click(function() {
+        if ($(this).attr('aria-expanded') === 'true') {
+            toggleIcon.removeClass('rotate');
+        } else {
+            toggleIcon.addClass('rotate');
+        }
+    });
+});
+</script>
+<script>
+    document.getElementById('currentYear').textContent = new Date().getFullYear();
+</script>
+
+</body>
+</html>

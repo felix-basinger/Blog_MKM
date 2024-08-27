@@ -1,0 +1,79 @@
+{% extends "base_without.html" %}
+{% load static %}
+{% block content %}
+
+<div class="content-section p-3 pt-5 mb-5 shadow-lg rounded-lg bg-white" style="border-radius: 15px; background: linear-gradient(to bottom, #0056fb 50%, #ffea01 50%) top/100% 20px no-repeat; overflow: hidden; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);">
+    <h1 class="text-center mb-2" style="font-size: 2.5rem; color: #333;">Про нас</h1>
+    <div class="border-top mt-3 mb-3" style="border-top: 2px solid #0056fb;"></div>
+    <p class="text-dark text-justify " style="font-size: 1rem;">
+        Пам’ятки історії, культури, архітектури та мистецтва Маріуполя це особливі цінності, успадковані від попередніх
+        поколінь, що формують та несуть у майбутнє неповторний код міста і його громади. Земля, на якій розташований
+        Маріуполь, багата й археологічними об’єктами, стародавніми курганами. Інформація про духовне та історичне
+        надбання ретельно збиралась та зберігалась різними поколіннями працівників Маріупольського краєзнавчого музею,
+        який і сам має більш ніж 100-річну історію.
+    </p>
+    <div class="border-top mt-3 mb-3" style="border-top: 2px solid #0056fb;"></div>
+    <div class="row  ">
+        <div class="col-md-6 d-flex align-items-center">
+            <div>
+<!--                <h2 style="font-size: 1.75rem; color: #333;">Наша миссия</h2>-->
+                <p class="text-dark text-justify" style="font-size: 1rem; line-height: 1.6;">
+                    Заснований 6 лютого 1920р. Музей за десятиліття роботи зібрав численні колекції, що демонструвались
+                    в експозиціях та виставках, проводив наукову та видавничу роботу, став справжньою скарбницею матеріальної
+                    складової історичної та культурної спадщини міста і краю.
+                </p>
+                <p class="text-dark text-justify" style="font-size: 1rem; line-height: 1.6;">За свою більш ніж вікову історію Музей пройшов складний та тривалий період трансформації, створюючи
+                    нові філії, збираючи нові експонати, відкриваючи нові сторінки маріупольського літопису.</p>
+            </div>
+        </div>
+
+        <div class="col-md-6 text-center">
+            <img src="{% static 'images/image-4440.png' %}" class="img-fluid rounded-lg shadow-sm" alt="Наша миссия" style="max-width: 100%; height: auto; border: 3px solid #0056fb;">
+        </div>
+    </div>
+    <div class="border-top mt-3 mb-3" style="border-top: 2px solid #0056fb;"></div>
+    <div class="row ">
+        <div class="col-md-6 order-md-2 d-flex align-items-center">
+            <div>
+<!--                <h2 style="font-size: 1.75rem; color: #333;">Наша команда</h2>-->
+                <p class="text-dark text-justify" style="font-size: 1rem; line-height: 1.6;">
+                    Російська агресія 2022 року вогняною рисою розділила історію Маріуполя на «до» та «після».
+                    Культурна спадщина міста зазнала значних втрат, багато пам’яток та об’єктів культури перебувають під
+                    загрозою знищення в окупації. Музейні зібрання, експозиції та самі будівлі закладу зазнали нещадних
+                    руйнувань, знищення та розкрадання загарбниками.
+                </p>
+            </div>
+        </div>
+        <div class="col-md-6 order-md-1 text-center">
+            <img src="{% static 'images/mariupol.jpg' %}" class="img-fluid rounded-lg shadow-sm" alt="Наша команда" style="max-width: 100%; height: auto; border: 3px solid #fed700;">
+        </div>
+    </div>
+    <div class="border-top mt-3 mb-3" style="border-top: 2px solid #0056fb;"></div>
+    <div class="row ">
+        <div class="col-md-6 d-flex align-items-center">
+            <div>
+<!--                <h2 style="font-size: 1.75rem; color: #333;">Наши ценности</h2>-->
+                <p class="text-dark text-justify" style="font-size: 1rem; line-height: 1.6;">
+                    Повернення Маріуполя до складу України – це справа часу. Відновлення його інфраструктури та важливих
+                    об’єктів – одне з першочергових завдань громади. А поки що команда Маріупольського краєзнавчого музею
+                    запроваджує цей проєкт задля збереження пам’яті та історичної правди про культуру і спадок Маріуполя.
+                </p>
+                <p class="text-dark text-justify" style="font-size: 1rem; line-height: 1.6;">
+                    Зібрані матеріали спираються на результати досліджень музейників та краєзнавців, підкріплені фактами
+                    з фондових колекцій Музею: документальної, фотографічної, художньої, етнографічної тощо.</p>
+            </div>
+        </div>
+        <div class="col-md-6 text-center">
+            <img src="{% static 'images/flag-ukrainy-s-trizubom-3.jpg' %}" class="img-fluid rounded-lg shadow-sm" alt="Наши ценности" style="max-width: 100%; height: auto; border: 3px solid #0056fb;">
+        </div>
+
+        <p class="text-dark text-justify mt-5 ml-3 mr-3" style="font-size: 1rem; line-height: 1.6;">
+                    <b>Віримо, що дописи про важливі, на сьогодні понівечені війною, об’єкти нададуть емоційної підтримки
+            маріупольцям, які плекають спогади про місця та історію рідного міста.</b></p>
+    </div>
+
+    <div class="text-center mt-2 mb-2">
+        <a href="{% url 'index' %}" class="btn btn-outline-dark log" style="max-width: 250px; font-size: 1.2rem;">Перейти до блогу</a>
+    </div>
+</div>
+{% endblock content %}
