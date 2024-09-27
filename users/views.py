@@ -3,6 +3,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from django_user_agents.utils import get_user_agent
 
 
 def register(request):
@@ -21,6 +22,13 @@ def register(request):
 
 @login_required
 def profile(request):
+    user_agent = get_user_agent(request)
+
+    if user_agent.is_mobile:
+        template = 'users/mobile/profile.html'
+    else:
+        template = 'users/profile.html'
+
     if request.method == 'POST':
         u_form = UserUpdateForm(request.POST, instance=request.user)
         p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
@@ -39,4 +47,4 @@ def profile(request):
         'p_form': p_form
     }
 
-    return render(request, 'users/profile.html', context)
+    return render(request, template, context)

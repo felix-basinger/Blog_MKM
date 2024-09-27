@@ -7,6 +7,74 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+    <!-- SEO Meta Tags -->
+    {% if title %}
+    <meta name="description" content="{{ description|default:'Описание страницы по умолчанию' }}">
+    <meta name="keywords" content="{{ keywords|default:'ключевые, слова, по умолчанию' }}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {% endif %}
+
+    <!-- Open Graph Meta Tags -->
+    {% if title %}
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description|default:'Описание страницы по умолчанию' }}">
+    <meta property="og:image" content="{% if og_image %}{{ og_image }}{% else %}{% static 'images/new_gerb.png' %}{% endif %}">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% endif %}
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    {% if title %}
+    <meta name="twitter:title" content="{{ title }}">
+    <meta name="twitter:description" content="{{ description|default:'Описание страницы по умолчанию' }}">
+    {% endif %}
+
+    <!-- Additional SEO Tags for Google and Safari -->
+    <meta name="google-site-verification" content="YOUR_GOOGLE_VERIFICATION_CODE"> <!-- Google Search Console Verification -->
+    <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Optimizes for iOS Safari -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"> <!-- Changes status bar color in iOS -->
+    <meta name="theme-color" content="#0056fb"> <!-- Sets the theme color for the browser address bar in mobile browsers -->
+
+    <!-- Structured Data (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "name": "Культурна Спадщина Маріуполя",
+      "description": "{{ description|default:'Описание страницы по умолчанию' }}",
+      "url": "{{ request.build_absolute_uri }}"
+    }
+    </script>
+
+    <!-- Lazy Loading for Images (for better performance) -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let lazyImages = [].slice.call(document.querySelectorAll("img.lazy"));
+            if ("IntersectionObserver" in window) {
+                let lazyImageObserver = new IntersectionObserver(function(entries, observer) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            let lazyImage = entry.target;
+                            lazyImage.src = lazyImage.dataset.src;
+                            lazyImage.classList.remove("lazy");
+                            lazyImageObserver.unobserve(lazyImage);
+                        }
+                    });
+                });
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImageObserver.observe(lazyImage);
+                });
+            } else {
+                // Fallback for browsers without IntersectionObserver
+                lazyImages.forEach(function(lazyImage) {
+                    lazyImage.src = lazyImage.dataset.src;
+                    lazyImage.classList.remove("lazy");
+                });
+            }
+        });
+    </script>
+
     <!-- Bootstrap, иконки и шрифт -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
@@ -19,11 +87,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Arsenal+SC:ital,wght@0,400;0,700;1,400;1,700&display=swap"
           rel="stylesheet">
 
-    {% if title %}
-    <title>Блог клуба {{ title }}</title>
-    {% else %}
-    <title>Блог клуба Python Bytes</title>
-    {% endif %}
+    <title>Культурна Спадщина Маріуполя</title>
 
     <style>
         body {

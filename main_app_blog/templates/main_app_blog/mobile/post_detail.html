@@ -2,7 +2,14 @@
 {% load static %}
 {% load crispy_forms_tags %}
 {% block content %}
-
+<style>
+     .content-section img {
+        padding: 0 10px;
+        max-width: 100%; /* Ограничиваем максимальную ширину изображений */
+        max-height: 100%; /* Сохраняем пропорции изображения */
+        display: inline-block;
+    }
+</style>
 <div class="mb-4">
     <button class="btn btn-outline-secondary log" onclick="window.history.back();">&larr; Назад</button>
 </div>
@@ -46,10 +53,10 @@
             <h3 class="mt-1 mb-2 " style="max-width: 100%; height: auto; object-fit: cover; font-weight: 700; color: black;">{{ post.title }}</h3>
             <p class="article-content text-dark post-content" style="font-size: 18px;">{{ post.content|safe }}</p>
             <div class="text-right">
-                {% if user.is_authenticated %}
+
                 <form id="like-form" action="{% url 'like-post' object.pk %}" method="POST" class="d-inline-block">
                     {% csrf_token %}
-                    Оценить |
+                    Оцінити |
                     <button type="button" class="btn btn-link p-0" id="like-button" style="text-decoration: none;">
                         <i id="like-icon"
                            class="bx {% if user in object.likes.all %}bxs-like text-dark{% else %}bx-like text-dark{% endif %}"
@@ -67,7 +74,7 @@
                         <span id="dislike-count" style="color: black;">{{ object.total_dislikes }}</span>
                     </button>
                 </form>
-                {% endif %}
+
             </div>
 
         </div>
@@ -144,71 +151,87 @@
 
 
 <script>
-    document.getElementById('like-button').addEventListener('click', function() {
-        const url = document.getElementById('like-form').action;
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Обработчик клика по кнопке лайка
+        document.getElementById('like-button').addEventListener('click', function() {
+            const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+            if (!isAuthenticated) {
+                window.location.href = "{% url 'login' %}";
+                return;
+            }
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateButtons(data);
-        })
-        .catch(error => console.error('Error:', error));
-    });
+            const url = document.getElementById('like-form').action;
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-    document.getElementById('dislike-button').addEventListener('click', function() {
-        const url = document.getElementById('dislike-form').action;
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateButtons(data);
+            })
+            .catch(error => console.error('Error:', error));
+        });
 
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrftoken,
-                'X-Requested-With': 'XMLHttpRequest'
-            },
-        })
-        .then(response => response.json())
-        .then(data => {
-            updateButtons(data);
-        })
-        .catch(error => console.error('Error:', error));
-    });
+        // Обработчик клика по кнопке дизлайка
+        document.getElementById('dislike-button').addEventListener('click', function() {
+            const isAuthenticated = {{ user.is_authenticated|yesno:"true,false" }};
+            if (!isAuthenticated) {
+                window.location.href = "{% url 'login' %}";
+                return;
+            }
 
-    function updateButtons(data) {
-        const likeIcon = document.getElementById('like-icon');
-        const likeCount = document.getElementById('like-count');
-        const dislikeIcon = document.getElementById('dislike-icon');
-        const dislikeCount = document.getElementById('dislike-count');
+            const url = document.getElementById('dislike-form').action;
+            const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        if (data.liked) {
-            likeIcon.classList.remove('bx-like', 'text-muted');
-            likeIcon.classList.add('bxs-like', 'text-primary');
-            dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
-            dislikeIcon.classList.add('bx-dislike', 'text-muted');
-        } else {
-            likeIcon.classList.remove('bxs-like', 'text-primary');
-            likeIcon.classList.add('bx-like', 'text-muted');
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateButtons(data);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function updateButtons(data) {
+            const likeIcon = document.getElementById('like-icon');
+            const likeCount = document.getElementById('like-count');
+            const dislikeIcon = document.getElementById('dislike-icon');
+            const dislikeCount = document.getElementById('dislike-count');
+
+            if (data.liked) {
+                likeIcon.classList.remove('bx-like', 'text-muted');
+                likeIcon.classList.add('bxs-like', 'text-primary');
+                dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
+                dislikeIcon.classList.add('bx-dislike', 'text-muted');
+            } else {
+                likeIcon.classList.remove('bxs-like', 'text-primary');
+                likeIcon.classList.add('bx-like', 'text-muted');
+            }
+
+            if (data.disliked) {
+                dislikeIcon.classList.remove('bx-dislike', 'text-muted');
+                dislikeIcon.classList.add('bxs-dislike', 'text-primary');
+                likeIcon.classList.remove('bxs-like', 'text-primary');
+                likeIcon.classList.add('bx-like', 'text-muted');
+            } else {
+                dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
+                dislikeIcon.classList.add('bx-dislike', 'text-muted');
+            }
+
+            likeCount.textContent = data.total_likes;
+            dislikeCount.textContent = data.total_dislikes;
         }
-
-        if (data.disliked) {
-            dislikeIcon.classList.remove('bx-dislike', 'text-muted');
-            dislikeIcon.classList.add('bxs-dislike', 'text-primary');
-            likeIcon.classList.remove('bxs-like', 'text-primary');
-            likeIcon.classList.add('bx-like', 'text-muted');
-        } else {
-            dislikeIcon.classList.remove('bxs-dislike', 'text-primary');
-            dislikeIcon.classList.add('bx-dislike', 'text-muted');
-        }
-
-        likeCount.textContent = data.total_likes;
-        dislikeCount.textContent = data.total_dislikes;
-    }
+    });
 </script>
 
 

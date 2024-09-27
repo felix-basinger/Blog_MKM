@@ -45,6 +45,10 @@ class PostForm(forms.ModelForm):
     def save(self, commit=True):
         instance = super().save(commit=False)
 
+        # Сначала сохраняем объект Post, чтобы получить его ID
+        if commit:
+            instance.save()
+
         # Обработка новых тегов и описаний
         new_tags = self.cleaned_data.get('new_tags', '')
         new_tags_description = self.cleaned_data.get('new_tags_description', '').split('/')
@@ -60,10 +64,10 @@ class PostForm(forms.ModelForm):
                     # Если тег уже существует, обновляем его описание
                     tag.description = description
                 tag.save()  # Обязательно сохраняем изменения
-                instance.tags.add(tag)
+                instance.tags.add(tag)  # Теперь можно добавлять теги
 
-        if commit:
-            instance.save()
+        if commit and not instance.pk:
+            instance.save()  # Еще раз сохраняем объект, если он не был сохранен ранее
 
         return instance
 
@@ -79,39 +83,45 @@ class PostForm(forms.ModelForm):
             'content': SummernoteWidget(attrs={
                 'summernote': {
                     'styleWithSpan': False,
-                    'height': 600,
+                    'height': 800,
                     'width': '100%',
                     'toolbar': [
                         ['style', ['bold', 'italic', 'underline', 'clear']],
-                        ['fontname', ['fontname']],  # Добавление выбора шрифта
-                        ['font', ['strikethrough', 'superscript', 'subscript']],
+                        ['fontname', ['fontname']],
                         ['fontsize', ['fontsize']],
                         ['color', ['color']],
                         ['para', ['ul', 'ol', 'paragraph']],
                         ['height', ['height']],
                         ['insert', ['picture', 'link', 'video', 'table', 'hr']],
+                        ['resize', ['resizeFull', 'resizeHalf', 'resizeQuarter']]
                     ],
+                    'fontSizes': ['8', '10', '12', '14', '16', '18', '20', '22', '24', '36', '48'],
                     'callbacks': {
+                        'onInit': '''function() {
+                        $('.note-editable').css('font-size', '18px');
+                    }''',
+                        'onChange': '''function(contents, $editable) {
+                        $editable.css('font-size', '18px');
+                    }''',
                         'onImageUpload': '''function(files) {
-                            var editor = $(this);
-                            var data = new FormData();
-                            data.append("file", files[0]);
-                            $.ajax({
-                                url: '/upload_image/',
-                                method: 'POST',
-                                data: data,
-                                contentType: false,
-                                processData: false,
-                                success: function(url) {
-                                    editor.summernote('insertImage', url, function($image) {
-                                        $image.css('width', '100%');
-                                        $image.css('height', 'auto');
-                                        $image.css('object-fit', 'cover');
-                                        $image.css('border-radius', '15px');
-                                    });
-                                }
-                            });
-                        }'''
+                                var editor = $(this);
+                                var data = new FormData();
+                                data.append("file", files[0]);
+                                $.ajax({
+                                    url: '/upload_image/',
+                                    method: 'POST',
+                                    data: data,
+                                    contentType: false,
+                                    processData: false,
+                                    'success': function(url) {
+                                        editor.summernote('insertImage', url, function($image) {
+                                            // Убираем жесткую ширину и высоту
+                                            $image.css('object-fit', 'contain');
+                                            $image.css('border-radius', '15px');
+                                        });
+                                    }
+                                });
+                            }'''
                     }
                 }
             })

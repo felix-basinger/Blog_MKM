@@ -228,3 +228,16 @@ footer a:hover {
     height: auto !important;
     object-fit: cover !important;
 }
+
+.note-editable {
+    font-size: 18px !important;
+}
+
+.post-image {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+    .post-content img {
+    margin-left: 10px;
+    margin-right: 10px;
+}

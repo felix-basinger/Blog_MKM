@@ -18,7 +18,7 @@ class PostListView(ListView):
     template_name = 'main_app_blog/index.html'
     context_object_name = 'posts'
     ordering = ['-date_posted']
-    paginate_by = 2
+    paginate_by = 5
 
     def get_template_names(self):
         # Получаем User-Agent объекта из запроса
@@ -185,22 +185,15 @@ class PostCreateView(CreateView):
         return response
 
     def process_images(self, content):
-        from bs4 import BeautifulSoup
-
-        soup = BeautifulSoup(content, 'html.parser')
-        images = soup.find_all('img')
-        captions = self.request.POST.getlist('captions')
-
-        for i, img in enumerate(images):
-            img['style'] = 'width: 100%; height: auto; object-fit: cover;'
-            caption_text = captions[i] if i < len(captions) else ''
-
-            # Создание нового тега <div> для изображения и подписи
-            # img_wrapper = soup.new_tag('div', **{'class': 'my-4'})
-            # img.insert_before(img_wrapper)
-            # img_wrapper.append(img)
-
-        return str(soup)
+        """
+            Обрабатывает изображения в контенте и добавляет к ним подписи.
+            """
+        images = self.object.images.all()  # Получаем все изображения, связанные с постом
+        for image in images:
+            # Ищем изображения в контенте по их URL или другим идентификаторам
+            image_tag = f'<img src="{image.url}"'
+            caption = f'<figcaption>{image.caption}</figcaption>'
+        return content
 
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
@@ -248,22 +241,15 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return response
 
     def process_images(self, content):
-        from bs4 import BeautifulSoup
-
-        soup = BeautifulSoup(content, 'html.parser')
-        images = soup.find_all('img')
-        captions = self.request.POST.getlist('captions')
-
-        for i, img in enumerate(images):
-            img['style'] = 'width: 100%; height: auto; object-fit: cover;'
-            caption_text = captions[i] if i < len(captions) else ''
-
-            # Создание нового тега <div> для изображения и подписи
-            # img_wrapper = soup.new_tag('div', **{'class': 'my-4'})
-            # img.insert_before(img_wrapper)
-            # img_wrapper.append(img)
-
-        return str(soup)
+        """
+            Обрабатывает изображения в контенте и добавляет к ним подписи.
+            """
+        images = self.object.images.all()  # Получаем все изображения, связанные с постом
+        for image in images:
+            # Ищем изображения в контенте по их URL или другим идентификаторам
+            image_tag = f'<img src="{image.url}"'
+            caption = f'<figcaption>{image.caption}</figcaption>'
+        return content
 
     def test_func(self):
         post = self.get_object()
